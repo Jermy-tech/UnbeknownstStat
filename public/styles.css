@@ -1,0 +1,235 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #000;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2, p {
+    margin: 0 0 15px 0;
+    padding: 0;
+}
+
+a {
+    color: #0ff; /* Neon Blue */
+    text-decoration: none;
+}
+
+a:hover {
+    color: #0ff; /* Neon Blue */
+    text-decoration: underline;
+}
+
+/* Header Styles */
+.main-header {
+    text-align: center;
+    padding: 100px 20px;
+    background: #111; /* Slightly lighter black */
+}
+
+.main-header h1 {
+    font-size: 3em;
+    margin-bottom: 10px;
+}
+
+.main-header p {
+    font-size: 1.2em;
+    margin-bottom: 30px;
+}
+
+.continue-button {
+    display: inline-block;
+    padding: 10px 20px;
+    border: 2px solid #0ff;
+    color: #0ff;
+    background: transparent;
+    font-size: 1.2em;
+    transition: background 0.3s, color 0.3s;
+}
+
+.continue-button:hover {
+    background: #0ff;
+    color: #000;
+}
+
+/* Card Section Styles */
+.cards-section {
+    padding: 50px 20px;
+    background: #222;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.card {
+    background: #333;
+    padding: 20px;
+    margin: 20px;
+    width: 300px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #0ff;
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+}
+
+/* Contact Section Styles */
+.contact-section {
+    padding: 50px 20px;
+    background: #111;
+    text-align: center;
+}
+
+.contact-section h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+.contact-section p {
+    font-size: 1.2em;
+}
+
+/* Footer Styles */
+.main-footer {
+    padding: 20px;
+    text-align: center;
+    background: #000;
+    color: #666;
+}
+
+/* Navigation Bar Styles */
+.navbar {
+    background-color: #111;
+    padding: 10px;
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 50px;
+    box-shadow: 0 0 15px #0ff;
+    z-index: 1000; /* Keeps the navbar on top of other elements */
+}
+
+.navbar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.navbar ul li {
+    margin: 0 15px;
+}
+
+.navbar ul li a {
+    color: #0ff;
+    text-decoration: none;
+    font-size: 1.2em;
+    padding: 10px 20px;
+    border-radius: 30px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.navbar ul li a:hover {
+    background-color: #0ff;
+    color: #000;
+}
+
+/* Adjust the header padding to accommodate the navbar */
+.main-header {
+    padding: 150px 20px 100px 20px; /* Increased top padding */
+}
+
+/* Sidebar Navigation */
+.content-container {
+    display: flex;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #111;
+    padding: 20px;
+    position: sticky;
+    top: 60px;
+    height: calc(100vh - 60px);
+    box-shadow: 0 0 15px #0ff;
+}
+
+.sidebar h2 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    color: #0ff;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin-bottom: 15px;
+}
+
+.sidebar ul li a {
+    color: #0ff;
+    text-decoration: none;
+    font-size: 1.1em;
+    transition: color 0.3s;
+}
+
+.sidebar ul li a:hover {
+    color: #fff;
+}
+
+/* Main Documentation Content */
+.docs-content {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #222;
+    color: #fff;
+}
+
+.docs-content section {
+    margin-bottom: 50px;
+}
+
+.docs-content h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #0ff;
+    padding-bottom: 10px;
+}
+
+.docs-content h3 {
+    font-size: 1.5em;
+    margin-top: 20px;
+    color: #0ff;
+}
+
+.docs-content pre {
+    background-color: #333;
+    padding: 15px;
+    border-radius: 5px;
+    color: #0ff;
+    overflow-x: auto;
+    margin-top: 10px;
+}
+
+.docs-content code {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1em;
+    color: #fff;
+}
+
+/* Footer Styles */
+.main-footer {
+    padding: 20px;
+    text-align: center;
+    background: #000;
+    color: #666;
+}
