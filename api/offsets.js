@@ -2,7 +2,7 @@ const express = require('express');
 const https = require('https');
 const router = express.Router();
 
-// Helper function to fetch data from a given URL
+// Helper function to fetch data from a given URL and remove credits and empty spaces
 const fetchData = (url, callback, res) => {
     https.get(url, (apiRes) => {
         let data = '';
@@ -10,7 +10,13 @@ const fetchData = (url, callback, res) => {
             data += chunk;
         });
         apiRes.on('end', () => {
-            callback(data);
+            // Clean the data: remove the credits line and empty lines
+            const cleanedData = data
+                .split('\n') // Split the data into lines
+                .filter(line => !line.includes('credits die kenneth_cmt') && line.trim() !== '') // Remove credits and empty lines
+                .join('\n'); // Join the cleaned lines back into a string
+
+            callback(cleanedData); // Pass the cleaned data to the callback
         });
     }).on('error', (err) => {
         res.status(500).send(`Error fetching data from ${url}`);
