@@ -7,30 +7,31 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="status.css">
 </head>
 <body>
     <header>
         <div class="container">
             <nav>
-                <div class="logo">Rbxstats</div> 
+                <div class="logo">Rbxstats</div>
                 <div class="nav-links">
                     <a href="index.html">Home</a>
                     <a href="https://docs.rbxstats.xyz">Docs</a>
-                    <a href="index.html">WIP</a> 
+                    <a href="#" onclick="showPopup(); return false;">Test</a>
                 </div>
             </nav>
         </div>
     </header>
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h1>Rbxstats</h1>
-                <p>Advanced All In One Exploit Website<p>
-                <a href="https://docs.rbxstats.xyz" class="cta-button">View API Docs</a>
 
-            </div>
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Welcome to Rbxstats</h1>
+            <p>Your ultimate hub for Roblox exploits and tools.</p>
+            <a href="https://docs.rbxstats.xyz" class="cta-button">View API Docs</a>
+            <a href="#" class="cta-button" onclick="showPopup(); return false;">Show Info</a>
         </div>
     </section>
+
     <section class="features" id="features">
         <div class="container">
             <h2>Features</h2>
@@ -38,21 +39,22 @@
                 <div class="feature-card">
                     <div class="feature-icon">🚀</div>
                     <h3>Ease Of Use</h3>
-                    <p>We provide a simple set up and 24/7 support, ensuring you have the best experience.</p>
+                    <p>Simple setup with 24/7 support for the best experience.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">🔒</div>
                     <h3>Safe & Secure</h3>
-                    <p>We remain vigilant and on point about vulnerabilities and bugs; we do not take our security lightly.</p>
+                    <p>Vigilant about vulnerabilities and bugs; security is our priority.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">⚡</div>
                     <h3>Speed</h3>
-                    <p>We ensure the fastest loading times with a secure and lightning-fast API server.</p>
+                    <p>Fast loading times with a secure and efficient API server.</p>
                 </div>
             </div>
         </div>
     </section>
+
     <section class="pricing" id="pricing">
         <div class="container">
             <h2>Pricing</h2>
@@ -60,26 +62,37 @@
                 <div class="pricing-card">
                     <div class="pricing-icon">💎</div>
                     <h3>Premium</h3>
-                    <p>If we decide to go paid or API(KEYED) we will update this :3.</p>
+                    <p>We will update this if we decide to go paid or API (KEYED).</p>
                 </div>
             </div>
         </div>
     </section>
 
-    </section>
     <section class="community" id="community">
         <div class="container">
             <h2>Community</h2>
             <div class="community-content">
-                <a href="https://discord.gg/ZEwPnf5k" class="cta-button">Visit Our Discord</a> 
+                <a href="https://discord.gg/ZEwPnf5k" class="cta-button">Join Our Discord</a>
             </div>
         </div>
     </section>
-   
-    </section>
+
+    <div class="popup-overlay" id="popup">
+        <div class="popup-content">
+            <a href="#" class="cta-button" onclick="closePopup(); return false;">Close</a>
+            <h2 class="TestTitle">API Example:</h2>
+            <div id="version-info"></div>
+            <div class="info-container">
+                <div id="executor-info"></div>
+                <div id="offset-info"></div>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <p>&copy; 2024 Rbxstats.xyz. All rights reserved.</p>
     </footer>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const header = document.querySelector('header');
@@ -100,6 +113,79 @@
 
             observer.observe(hero);
         });
+
+        // Show the popup
+        function showPopup() {
+            document.getElementById('popup').style.display = 'flex';
+            fetchExecutorAndOffsetInfo();
+        }
+
+        // Close the popup
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        // Fetch executor, offset info, and latest version from API
+        async function fetchExecutorAndOffsetInfo() {
+            try {
+                // Fetch latest versions
+                const versionResponse = await fetch('/api/versions/latest');
+                const versions = await versionResponse.json();
+                const versionInfoDiv = document.getElementById('version-info');
+                versionInfoDiv.innerHTML = `
+                    <div class="VersionInfoD">
+                        <h2>Current Versions</h2>
+                        <p>Windows: ${versions.Windows} (Updated: ${versions.WindowsDate})</p>
+                        <p>Mac: ${versions.Mac} (Updated: ${versions.MacDate})</p>
+                    </div>
+                `;
+
+                // Fetch executors
+                const executorResponse = await fetch('/api/exploits/');
+                const executors = await executorResponse.json();    
+                const executorInfoDiv = document.getElementById('executor-info');
+                executorInfoDiv.innerHTML = ''; // Clear any previous data
+
+                executors.forEach(executor => {
+                    const executorCard = document.createElement('div');
+                    executorCard.className = 'executor-card';
+                    
+                    executorCard.innerHTML = `
+                        <div class="status">
+                            <h3 class="executor-title">${executor.title} (${executor.platform})</h3>
+                            <span class="${executor.detected ? 'detected' : 'undetected'}">${executor.detected ? 'Detected' : 'Undetected'}</span>
+                            <span class="${executor.free ? 'free' : 'paid'}">${executor.free ? 'Free' : 'Paid'}</span>
+                        </div>
+
+                        <p>Version: ${executor.version}</p>
+                        <p>Updated: ${executor.updatedDate}</p>
+                        <div class="links">
+                            <a href="${executor.websitelink}" class="cta-button" target="_blank">Website</a>
+                            <a href="${executor.discordlink}" class="cta-button" target="_blank">Discord</a>
+                        </div>
+                    `;
+
+                    executorInfoDiv.appendChild(executorCard);
+                });
+
+                // Fetch offsets
+                const offsetResponse = await fetch('/api/offsets/plain');
+                const offsets = await offsetResponse.text();
+                const offsetInfoDiv = document.getElementById('offset-info');
+                offsetInfoDiv.innerHTML = ''; // Clear any previous data
+
+                offsets.split('\n').forEach(offset => {
+                    const offsetCard = document.createElement('div');
+                    offsetCard.className = 'offset-card';
+                    offsetCard.innerHTML = `<p>${offset}</p>`;
+                    offsetInfoDiv.appendChild(offsetCard);
+                });
+            } catch (error) {
+                document.getElementById('version-info').textContent = 'Failed to load versions.';
+                document.getElementById('executor-info').textContent = 'Failed to load executors.';
+                document.getElementById('offset-info').textContent = 'Failed to load offsets.';
+            }
+        }
     </script>
 </body>
 </html>

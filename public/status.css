@@ -1,0 +1,244 @@
+/* Status Badges Container */
+.status {
+    display: flex;
+    align-items: center; /* Align items vertically centered */
+    justify-content: flex-end; /* Align items to the right */
+    gap: 10px; /* Space between badges */
+    margin-top: 10px;
+    flex-wrap: nowrap; /* Prevent wrapping of badges */
+}
+
+/* Status Badges */
+.status span {
+    display: inline-block;
+    align-items: center;
+    padding: 8px 15px;
+    border-radius: 12px;
+    font-size: 14px;
+    color: #000; /* Always black text */
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    /* Ensure badges do not wrap */
+    white-space: nowrap;
+}
+
+.VersionInfoD {
+    background-color: #1e1e1e; /* Dark background */
+    color: #f0f0f0; /* Light text color for contrast */
+    border-radius: 8px; /* Rounded corners */
+    padding: 20px; /* Spacing inside the element */
+    margin: 20px; /* Spacing outside the element */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Clean, modern font */
+    font-weight: bold; /* Bold text */
+    text-align: center; /* Center-align the text */
+    border: 1px solid #333; /* Slight border for definition */
+}
+
+.VersionInfoD h1, .VersionInfoD h2, .VersionInfoD h3 {
+    color: #e0e0e0; /* Slightly lighter text for headers */
+    margin: 10px 0; /* Spacing around headers */
+}
+
+.VersionInfoD p {
+    color: #b0b0b0; /* Light gray text for paragraphs */
+    margin: 10px 0; /* Spacing around paragraphs */
+    line-height: 1.6; /* Improved line spacing for readability */
+}
+
+/* Individual Status Styles */
+.detected {
+    background: linear-gradient(135deg, #ff4d4d, #ff1a1a);
+}
+
+.undetected {
+    background: linear-gradient(135deg, #4dff4d, #00cc00);
+}
+
+.free {
+    background: linear-gradient(135deg, #4d94ff, #0099ff);
+}
+
+.paid {
+    background: linear-gradient(135deg, #ffb84d, #ff9a00);
+}
+
+.beta {
+    background: linear-gradient(135deg, #f0ad4e, #e89e3a);
+}
+
+.uncStatus {
+    background: linear-gradient(135deg, #d9534f, #c62828);
+}
+
+/* Hover Effect for Badges */
+.status span:hover {
+    transform: scale(1.1);
+}
+
+/* Links */
+.links a {
+    color: #1e90ff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.links a:hover {
+    color: #0b79d0;
+    text-shadow: 0 0 5px #0b79d0;
+}
+
+/* Popup Overlay */
+.popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    transition: opacity 0.3s ease;
+}
+
+.TestTitle {
+    background-color: #333; /* Dark background for the title */
+    color: #ffffff; /* White text for contrast */
+    border-radius: 5px; /* Slightly rounded corners */
+    padding: 15px 20px; /* Spacing inside the element */
+    margin: 20px 0; /* Spacing outside the element */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Clean, modern font */
+    font-weight:     bold; /* Bold text */
+    text-align: center; /* Center-align the text */
+    font-size: 24px; /* Larger text size for prominence */
+    border: 1px solid #444; /* Slight border for definition */
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
+}
+
+.TestTitle h1 {
+    margin: 0; /* Remove default margin */
+    color: #ffffff; /* Ensure header text is white */
+}
+
+/* Popup Content */
+.popup-content {
+    background: #222;
+    padding: 25px;
+    border-radius: 12px;
+    color: #fff;
+    width: 90%;
+    max-width: 1500px;
+    max-height: 80vh; /* Limit the height of the popup */
+    overflow-y: auto; /* Enable vertical scrolling */
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+}
+
+/* Container for version and executor info */
+.info-container {
+    display: flex;
+    justify-content: space-between; /* Distribute space between items */
+    margin-bottom: 20px; /* Add some space below the info container */
+}
+
+/* Styling for individual info sections */
+#version-info, #executor-info {
+    flex: 1; /* Make both sections take equal width */
+    padding: 10px; /* Add some padding inside each section */
+    background: #333; /* Background color for contrast */
+    border-radius: 8px; /* Rounded corners */
+    margin: 0 10px; /* Space between the sections */
+}
+
+.popup-content.show {
+    transform: scale(1.05);
+}
+
+.popup-content button {
+    background: #1e90ff;
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+    font-size: 16px;
+}
+
+.popup-content button:hover {
+    background: #0b79d0;
+    transform: scale(1.05);
+}
+
+/* Executor Cards */
+.executor-card {
+    background: #292929;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    color: #e0e0e0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.executor-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+}
+
+.executor-card h3 {
+    margin: 0 0 15px;
+    font-size: 22px;
+}
+
+.executor-card p {
+    margin: 5px 0;
+    font-size: 18px;
+}
+
+/* Offset Cards */
+.offset-card {
+    background: #333;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    text-align: left;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.offset-card:hover {
+    background: #444;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+}
+
+.offset-card p {
+    margin: 0;
+    font-size: 18px;
+    color: #b0b0b0;
+    border-bottom: 1px solid #444;
+    padding-bottom: 8px;
+}
+
+/* Close Button Styling */
+.popup-content button.close {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    cursor: pointer;
+    border-radius: 8px;
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+.popup-content button.close:hover {
+    background-color: #cc0000;
+}
