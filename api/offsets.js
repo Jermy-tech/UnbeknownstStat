@@ -33,18 +33,18 @@ router.get('/plain', (req, res) => {
 });
 
 // Endpoint to fetch a specific offset by name
-router.get('/offset/:name', (req, res) => {
-    const offsetName = req.params.name;
-    fetchData('https://firox.xyz/offsets/roblox.txt', (data) => {
-        const regex = new RegExp(`constexpr\\s+std::uint32_t\\s+${offsetName}\\s*=\\s*0x[0-9a-fA-F]+;`, 'g');
-        const match = data.match(regex);
-        if (match) {
-            res.type('text/plain').send(match[0]);
-        } else {
-            res.status(404).send(`Offset "${offsetName}" not found`);
-        }
-    }, res);
-});
+//router.get('/offset/:name', (req, res) => {
+//    const offsetName = req.params.name;
+//    fetchData('https://firox.xyz/offsets/roblox.txt', (data) => {
+//        const regex = new RegExp(`constexpr\\s+std::uint32_t\\s+${offsetName}\\s*=\\s*0x[0-9a-fA-F]+;`, 'g');
+//        const match = data.match(regex);
+//        if (match) {
+//            res.type('text/plain').send(match[0]);
+//        } else {
+//            res.status(404).send(`Offset "${offsetName}" not found`);
+//        }
+//    }, res);
+//});
 
 // Endpoint to return all offsets in JSON format
 router.get('/json', (req, res) => {
@@ -61,25 +61,25 @@ router.get('/json', (req, res) => {
     }, res);
 });
 
-// Endpoint to fetch offsets starting with a specific prefix
-router.get('/prefix/:prefix', (req, res) => {
-    const prefix = req.params.prefix;
-    fetchData('https://firox.xyz/offsets/roblox.txt', (data) => {
-        const offsetLines = data.split('\n');
-        const matchingOffsets = {};
-        offsetLines.forEach((line) => {
-            const match = line.match(/constexpr\s+std::uint32_t\s+(\w+)\s*=\s*(0x[0-9a-fA-F]+);/);
-            if (match && match[1].startsWith(prefix)) {
-                matchingOffsets[match[1]] = match[2];
-            }
-        });
-        if (Object.keys(matchingOffsets).length > 0) {
-            res.json(matchingOffsets);
-        } else {
-            res.status(404).send(`No offsets found with prefix "${prefix}"`);
-        }
-    }, res);
-});
+//// Endpoint to fetch offsets starting with a specific prefix
+//router.get('/prefix/:prefix', (req, res) => {
+//    const prefix = req.params.prefix;
+//    fetchData('https://firox.xyz/offsets/roblox.txt', (data) => {
+//        const offsetLines = data.split('\n');
+//        const matchingOffsets = {};
+//        offsetLines.forEach((line) => {
+//            const match = line.match(/constexpr\s+std::uint32_t\s+(\w+)\s*=\s*(0x[0-9a-fA-F]+);/);
+//            if (match && match[1].startsWith(prefix)) {
+//                matchingOffsets[match[1]] = match[2];
+//            }
+//        });
+//        if (Object.keys(matchingOffsets).length > 0) {
+///           res.json(matchingOffsets);
+//        } else {
+//            res.status(404).send(`No offsets found with prefix "${prefix}"`);
+//        }
+//    }, res);
+//});
 
 // Endpoint to fetch all offsets related to 'Camera'
 router.get('/camera', (req, res) => {
@@ -100,4 +100,26 @@ router.get('/camera', (req, res) => {
     }, res);
 });
 
+// Endpoint to fetch all offsets related to 'Camera'
+router.get('/camera/plain', (req, res) => {
+    fetchData('https://firox.xyz/offsets/roblox.txt', (data) => {
+        const offsetLines = data.split('\n');
+        let cameraOffsetsTxt = '';
+        
+        // Parse offsets related to 'Camera'
+        offsetLines.forEach((line) => {
+            const match = line.match(/constexpr\s+std::uint32_t\s+(Camera\w+)\s*=\s*(0x[0-9a-fA-F]+);/);
+            if (match) {
+                cameraOffsetsTxt += `${match[1]} = ${match[2]}\n`;
+            }
+        });
+
+        // If camera offsets were found, display them as raw text
+        if (cameraOffsetsTxt.length > 0) {
+            res.type('text/plain').send(cameraOffsetsTxt);
+        } else {
+            res.status(404).send('No camera-related offsets found');
+        }
+    }, res);
+});
 module.exports = router;
