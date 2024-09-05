@@ -3,211 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rbxstats.xyz</title>
+    <title>Rbxstats</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
     <link rel="stylesheet" href="styles.css">
-    <style>
-        /* Popup overlay */
-        .popup-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-        }
-        /* Popup content */
-        .popup-content {
-            background: #1a1a1a;
-            color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 800px;
-            text-align: center;
-            overflow-y: auto;
-            max-height: 80%;
-        }
-        .popup-content h2 {
-            margin-top: 0;
-            font-size: 24px;
-        }
-        /* Styling for cards */
-        .executor-card {
-            background: #292929;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            color: #e0e0e0;
-        }
-        .executor-card h3 {
-            margin: 0 0 10px;
-            font-size: 20px;
-        }
-        .executor-card p {
-            margin: 5px 0;
-            font-size: 16px;
-        }
-        .executor-card .status {
-            margin-top: 10px;
-            display: flex;
-            gap: 10px;
-        }
-        .status span {
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        .detected { background-color: #ff4c4c; }
-        .undetected { background-color: #4caf50; }
-        .paid { background-color: #ff9800; }
-        .free { background-color: #00bcd4; }
-        .platform { background-color: #607d8b; }
-        /* Styling for offsets */
-        .offset-card {
-            background: #333;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            text-align: left;
-        }
-        .offset-card p {
-            margin: 0;
-            font-size: 16px;
-            color: #b0b0b0;
-            border-bottom: 1px solid #444;
-            padding-bottom: 5px;
-        }
-        /* Close button styling */
-        .popup-content button {
-            background-color: #00aaff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 5px;
-            margin-top: 20px;
-        }
-        .popup-content button:hover {
-            background-color: #0088cc;
-        }
-    </style>
 </head>
 <body>
-    <nav class="navbar">
-        <ul>
-            <li><a href="#home">Home</a></li>
-            <li><a href="docs.html">Docs</a></li>
-            <li><a href="#contact">Contact</a></li>
-            ㅤㅤ<li><a href="https://discord.gg/uVqZ5dCAw8">Discord</a></li>
-        </ul>
-    </nav>
-
-    <header class="main-header">
-        <h1>Welcome to Rbxstats.xyz</h1>
-        <p>Your go-to platform for exploiting.</p>
-        <a href="#info-cards" class="continue-button">Continue</a>ㅤㅤ
-        <a href="docs.html" class="continue-button">Documentation</a>ㅤㅤ
-        <button onclick="showPopup()" class="continue-button">Test The Api!</button><br>
-    </header>
-
-    <main>
-        <section id="info-cards" class="cards-section">
-            <div class="card">
-                <h2>Why Choose Us?</h2>
-                <p>Reason 1: We offer a powerful free API for offsets and exploits.</p>
-            </div>
-            <div class="card">
-                <h2>Top-Notch Quality</h2>
-                <p>Reason 2: We combine the most popular websites and APIs to offer a top-of-the-shelf experience when using us.</p>
-            </div>
-            <div class="card">
-                <h2>Seamless Experience</h2>
-                <p>Reason 3: Our API is as straightforward as it gets—just send a request and get your info back!</p>
-            </div>
-        </section>
-
-        <section id="contact" class="contact-section">
-            <h2>Contact Us</h2>
-            <p>Email: <a href="https://discord.gg/uVqZ5dCAw8">Discord</a></p>
-            <p>Phone: <a href="My Discord">@Syntaxsucks</a></p>
-        </section>
-    </main>
-
-    <div class="popup-overlay" id="popup">
-        <div class="popup-content">
-            <h2>Current Executors and Offsets</h2>
-            <div id="executor-info"></div>
-            <div id="offset-info"></div>
-            <button onclick="closePopup()">Close</button>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Rbxstats</div> 
+                <div class="nav-links">
+                    <a href="index.html">Home</a>
+                    <a href="https://docs.rbxstats.xyz">Docs</a>
+                    <a href="index.html">WIP</a> 
+                </div>
+            </nav>
         </div>
-    </div>
+    </header>
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Rbxstats</h1>
+                <p>Advanced All In One Exploit Website<p>
+                <a href="https://docs.rbxstats.xyz" class="cta-button">View API Docs</a>
 
-    <footer class="main-footer">
+            </div>
+        </div>
+    </section>
+    <section class="features" id="features">
+        <div class="container">
+            <h2>Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h3>Ease Of Use</h3>
+                    <p>We provide a simple set up and 24/7 support, ensuring you have the best experience.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Safe & Secure</h3>
+                    <p>We remain vigilant and on point about vulnerabilities and bugs; we do not take our security lightly.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Speed</h3>
+                    <p>We ensure the fastest loading times with a secure and lightning-fast API server.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <h2>Pricing</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-icon">💎</div>
+                    <h3>Premium</h3>
+                    <p>If we decide to go paid or API(KEYED) we will update this :3.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    </section>
+    <section class="community" id="community">
+        <div class="container">
+            <h2>Community</h2>
+            <div class="community-content">
+                <a href="https://discord.gg/ZEwPnf5k" class="cta-button">Visit Our Discord</a> 
+            </div>
+        </div>
+    </section>
+   
+    </section>
+    <footer>
         <p>&copy; 2024 Rbxstats.xyz. All rights reserved.</p>
     </footer>
-
     <script>
-        // Show the popup
-        function showPopup() {
-            document.getElementById('popup').style.display = 'flex';
-            fetchExecutorAndOffsetInfo();
-        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const header = document.querySelector('header');
+            const hero = document.querySelector('.hero');
 
-        // Close the popup
-        function closePopup() {
-            document.getElementById('popup').style.display = 'none';
-        }
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (!entry.isIntersecting) {
+                            header.classList.add('scrolled');
+                        } else {
+                            header.classList.remove('scrolled');
+                        }
+                    });
+                },
+                { threshold: 0.1 }
+            );
 
-        // Fetch executor and offset info from API
-        async function fetchExecutorAndOffsetInfo() {
-            try {
-                // Fetch executors
-                const executorResponse = await fetch('/api/exploits/');
-                const executors = await executorResponse.json();
-                const executorInfoDiv = document.getElementById('executor-info');
-                executorInfoDiv.innerHTML = ''; // Clear any previous data
-
-                executors.forEach(executor => {
-                    const executorCard = document.createElement('div');
-                    executorCard.className = 'executor-card';
-                    
-                    executorCard.innerHTML = `
-                        <h3>${executor.title} (${executor.platform})</h3>
-                        <p>Version: ${executor.version}</p>
-                        <p>Updated: ${executor.updatedDate}</p>
-                        <div class="status">
-                            <span class="${executor.detected ? 'detected' : 'undetected'}">${executor.detected ? 'Detected' : 'Undetected'}</span>
-                            <span class="${executor.free ? 'free' : 'paid'}">${executor.free ? 'Free' : 'Paid'}</span>
-                        </div>
-                    `;
-
-                    executorInfoDiv.appendChild(executorCard);
-                });
-
-                // Fetch offsets
-                const offsetResponse = await fetch('/api/offsets/plain');
-                const offsets = await offsetResponse.text();
-                const offsetInfoDiv = document.getElementById('offset-info');
-                offsetInfoDiv.innerHTML = ''; // Clear any previous data
-
-                offsets.split('\n').forEach(offset => {
-                    const offsetCard = document.createElement('div');
-                    offsetCard.className = 'offset-card';
-                    offsetCard.innerHTML = `<p>${offset}</p>`;
-                    offsetInfoDiv.appendChild(offsetCard);
-                });
-            } catch (error) {
-                document.getElementById('executor-info').textContent = 'Failed to load executors.';
-                document.getElementById('offset-info').textContent = 'Failed to load offsets.';
-            }
-        }
+            observer.observe(hero);
+        });
     </script>
 </body>
 </html>
