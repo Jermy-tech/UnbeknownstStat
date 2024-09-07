@@ -2,7 +2,7 @@ const express = require('express');
 const https = require('https');
 const router = express.Router();
 
-// Helper function to fetch data from a given URL and remove credits and empty spaces
+// Helper function to fetch data from a given URL
 const fetchData = (url, callback, res) => {
     https.get(url, (apiRes) => {
         let data = '';
@@ -10,26 +10,62 @@ const fetchData = (url, callback, res) => {
             data += chunk;
         });
         apiRes.on('end', () => {
-            // Clean the data: remove the credits line and empty lines
-            const cleanedData = data
-                .split('\n') // Split the data into lines
-                .filter(line => !line.includes('credits') && line.trim() !== '') // Remove credits and empty lines
-                .join('\n'); // Join the cleaned lines back into a string
-
-            callback(cleanedData); // Pass the cleaned data to the callback
+            callback(data);
         });
     }).on('error', (err) => {
         res.status(500).send(`Error fetching data from ${url}`);
     });
 };
 
+// Function to check versions
+const checkVersion = (callback, res) => {
+    fetchData('https://raw.githubusercontent.com/Jermy-tech/UnbeknownstStat/main/self-txt', (githubData) => {
+        const lines = githubData.split('\n');
+        const localVersion = lines[0].trim(); // Extract the version from the first line
+
+        let attempts = 0;
+        const requestLatestVersion = () => {
+            fetchData('https://rbxstats.xyz/api/versions/latest', (apiData) => {
+                try {
+                    const parsedData = JSON.parse(apiData);
+                    const latestVersion = parsedData.Windows;
+
+                    // Compare versions
+                    if (latestVersion === localVersion) {
+                        callback(githubData); // Use the GitHub offsets data
+                    } else {
+                        res.status(400).send('Offsets outdated, please wait for new offsets');
+                    }
+                } catch (err) {
+                    if (++attempts < 5) {
+                        setTimeout(requestLatestVersion, 1000); // Retry after 1 second
+                    } else {
+                        res.status(500).send('Error parsing data from version API');
+                    }
+                }
+            }, res);
+        };
+        requestLatestVersion();
+    }, res);
+};
+
+// Function to clean and format data (remove "constexpr std::uint32_t" and ";")
+const cleanData = (data) => {
+    return data
+        .split('\n')
+        .filter(line => line.includes('constexpr std::uint32_t') && line.trim() !== '')
+        .map(line => line.replace('constexpr std::uint32_t ', '').replace(';', ''))
+        .join('\n');
+};
+
 // General offsets endpoint (returns all offsets in JSON format)
 router.get('/', (req, res) => {
-    fetchData('https://firox.xyz/offsets/roblox.txt', (data) => {
-        const offsetLines = data.split('\n');
+    checkVersion((data) => {
+        const cleanedData = cleanData(data);
+        const offsetLines = cleanedData.split('\n');
         const offsets = {};
         offsetLines.forEach((line) => {
-            const match = line.match(/\w+\s+(\w+)\s*=\s*(0x[0-9a-fA-F]+)/);
+            const match = line.match(/(\w+)\s*=\s*(0x[0-9a-fA-F]+)/);
             if (match) {
                 offsets[match[1]] = match[2];
             }
@@ -38,13 +74,14 @@ router.get('/', (req, res) => {
     }, res);
 });
 
-// Plain version of general offsets (removes types, semicolons, and gives clean text)
+// Plain version of general offsets
 router.get('/plain', (req, res) => {
-    fetchData('https://firox.xyz/offsets/roblox.txt', (data) => {
-        const offsetLines = data.split('\n');
+    checkVersion((data) => {
+        const cleanedData = cleanData(data);
+        const offsetLines = cleanedData.split('\n');
         let plainOutput = '';
         offsetLines.forEach((line) => {
-            const match = line.match(/\w+\s+(\w+)\s*=\s*(0x[0-9a-fA-F]+)/);
+            const match = line.match(/(\w+)\s*=\s*(0x[0-9a-fA-F]+)/);
             if (match) {
                 plainOutput += `${match[1]} = ${match[2]}\n`;
             }
@@ -56,9 +93,10 @@ router.get('/plain', (req, res) => {
 // Search specific offset by name (JSON version)
 router.get('/search/:name', (req, res) => {
     const offsetName = req.params.name;
-    fetchData('https://firox.xyz/offsets/roblox.txt', (data) => {
+    checkVersion((data) => {
+        const cleanedData = cleanData(data);
         const regex = new RegExp(`${offsetName}\\s*=\\s*0x[0-9a-fA-F]+`, 'g');
-        const match = data.match(regex);
+        const match = cleanedData.match(regex);
         if (match) {
             res.json({ [offsetName]: match[0].split('=')[1].trim() });
         } else {
@@ -67,12 +105,13 @@ router.get('/search/:name', (req, res) => {
     }, res);
 });
 
-// Plain version of search specific offset by name (plain text)
+// Plain version of search specific offset by name
 router.get('/search/:name/plain', (req, res) => {
     const offsetName = req.params.name;
-    fetchData('https://firox.xyz/offsets/roblox.txt', (data) => {
+    checkVersion((data) => {
+        const cleanedData = cleanData(data);
         const regex = new RegExp(`${offsetName}\\s*=\\s*0x[0-9a-fA-F]+`, 'g');
-        const match = data.match(regex);
+        const match = cleanedData.match(regex);
         if (match) {
             const formatted = match[0].replace(/(\w+)\s*=\s*(0x[0-9a-fA-F]+)/, '$1 = $2');
             res.type('text/plain').send(formatted);
@@ -85,11 +124,12 @@ router.get('/search/:name/plain', (req, res) => {
 // Fetch offsets starting with a specific prefix (JSON version)
 router.get('/prefix/:prefix', (req, res) => {
     const prefix = req.params.prefix;
-    fetchData('https://firox.xyz/offsets/roblox.txt', (data) => {
-        const offsetLines = data.split('\n');
+    checkVersion((data) => {
+        const cleanedData = cleanData(data);
+        const offsetLines = cleanedData.split('\n');
         const matchingOffsets = {};
         offsetLines.forEach((line) => {
-            const match = line.match(/\w+\s+(\w+)\s*=\s*(0x[0-9a-fA-F]+)/);
+            const match = line.match(/(\w+)\s*=\s*(0x[0-9a-fA-F]+)/);
             if (match && match[1].startsWith(prefix)) {
                 matchingOffsets[match[1]] = match[2];
             }
@@ -102,14 +142,15 @@ router.get('/prefix/:prefix', (req, res) => {
     }, res);
 });
 
-// Plain version of fetch offsets by prefix (plain text)
+// Plain version of fetch offsets by prefix
 router.get('/prefix/:prefix/plain', (req, res) => {
     const prefix = req.params.prefix;
-    fetchData('https://firox.xyz/offsets/roblox.txt', (data) => {
+    checkVersion((data) => {
         let plainOutput = '';
-        const offsetLines = data.split('\n');
+        const cleanedData = cleanData(data);
+        const offsetLines = cleanedData.split('\n');
         offsetLines.forEach((line) => {
-            const match = line.match(/\w+\s+(\w+)\s*=\s*(0x[0-9a-fA-F]+)/);
+            const match = line.match(/(\w+)\s*=\s*(0x[0-9a-fA-F]+)/);
             if (match && match[1].startsWith(prefix)) {
                 plainOutput += `${match[1]} = ${match[2]}\n`;
             }
@@ -124,11 +165,12 @@ router.get('/prefix/:prefix/plain', (req, res) => {
 
 // Fetch all offsets related to 'Camera' (JSON version)
 router.get('/camera', (req, res) => {
-    fetchData('https://firox.xyz/offsets/roblox.txt', (data) => {
-        const offsetLines = data.split('\n');
+    checkVersion((data) => {
+        const cleanedData = cleanData(data);
+        const offsetLines = cleanedData.split('\n');
         const cameraOffsets = {};
         offsetLines.forEach((line) => {
-            const match = line.match(/\w+\s+(Camera\w+)\s*=\s*(0x[0-9a-fA-F]+)/);
+            const match = line.match(/(Camera\w+)\s*=\s*(0x[0-9a-fA-F]+)/);
             if (match) {
                 cameraOffsets[match[1]] = match[2];
             }
@@ -141,13 +183,14 @@ router.get('/camera', (req, res) => {
     }, res);
 });
 
-// Plain version of camera offsets (plain text)
+// Plain version of camera offsets
 router.get('/camera/plain', (req, res) => {
-    fetchData('https://firox.xyz/offsets/roblox.txt', (data) => {
+    checkVersion((data) => {
         let plainOutput = '';
-        const offsetLines = data.split('\n');
+        const cleanedData = cleanData(data);
+        const offsetLines = cleanedData.split('\n');
         offsetLines.forEach((line) => {
-            const match = line.match(/\w+\s+(Camera\w+)\s*=\s*(0x[0-9a-fA-F]+)/);
+            const match = line.match(/(Camera\w+)\s*=\s*(0x[0-9a-fA-F]+)/);
             if (match) {
                 plainOutput += `${match[1]} = ${match[2]}\n`;
             }
