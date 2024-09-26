@@ -203,4 +203,57 @@ router.get('/camera/plain', (req, res) => {
     }, res);
 });
 
+router.get('/getname/:id', (req, res) => {
+    const gameId = req.params.id;
+
+    // Basic validation to ensure the ID is numeric
+    if (!/^\d+$/.test(gameId)) {
+        return res.status(400).send('Invalid game ID format. ID must be numeric.');
+    }
+
+    const robloxApiUrl = `https://games.roblox.com/v1/games?universeIds=${gameId}`;
+
+    fetchData(robloxApiUrl, (apiData) => {
+        try {
+            const parsedData = JSON.parse(apiData);
+            if (parsedData.data && parsedData.data.length > 0) {
+                // Return the entire game data in JSON format
+                res.json(parsedData.data[0]);
+            } else {
+                res.status(404).send(`No game found with ID ${gameId}`);
+            }
+        } catch (err) {
+            console.error(`Error parsing Roblox API response for ID ${gameId}:`, err);
+            res.status(500).send('Error processing Roblox API response.');
+        }
+    }, res);
+});
+
+router.get('/getname/:id/plain', (req, res) => {
+    const gameId = req.params.id;
+
+    // Basic validation to ensure the ID is numeric
+    if (!/^\d+$/.test(gameId)) {
+        return res.status(400).send('Invalid game ID format. ID must be numeric.');
+    }
+
+    const robloxApiUrl = `https://games.roblox.com/v1/games?universeIds=${gameId}`;
+
+    fetchData(robloxApiUrl, (apiData) => {
+        try {
+            const parsedData = JSON.parse(apiData);
+            if (parsedData.data && parsedData.data.length > 0) {
+                // Convert the JSON object to plain text using JSON.stringify with formatting
+                const plainTextResponse = JSON.stringify(parsedData.data[0], null, 2);
+                res.type('text/plain').send(plainTextResponse);
+            } else {
+                res.status(404).send(`No game found with ID ${gameId}`);
+            }
+        } catch (err) {
+            console.error(`Error parsing Roblox API response for ID ${gameId}:`, err);
+            res.status(500).send('Error processing Roblox API response.');
+        }
+    }, res);
+});
+
 module.exports = router;
