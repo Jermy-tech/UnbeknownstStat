@@ -203,7 +203,7 @@ router.get('/camera/plain', (req, res) => {
     }, res);
 });
 
-router.get('/getname/:id', (req, res) => {
+router.get('/game/:id', (req, res) => {
     const gameId = req.params.id;
 
     // Basic validation to ensure the ID is numeric
@@ -229,7 +229,7 @@ router.get('/getname/:id', (req, res) => {
     }, res);
 });
 
-router.get('/getname/:id/plain', (req, res) => {
+router.get('/game/:id/plain', (req, res) => {
     const gameId = req.params.id;
 
     // Basic validation to ensure the ID is numeric
@@ -243,8 +243,22 @@ router.get('/getname/:id/plain', (req, res) => {
         try {
             const parsedData = JSON.parse(apiData);
             if (parsedData.data && parsedData.data.length > 0) {
-                // Convert the JSON object to plain text using JSON.stringify with formatting
-                const plainTextResponse = JSON.stringify(parsedData.data[0], null, 2);
+                const gameData = parsedData.data[0];
+                
+                // Construct a plain text response with "key = value" on new lines
+                let plainTextResponse = '';
+
+                Object.keys(gameData).forEach(key => {
+                    if (typeof gameData[key] === 'object' && gameData[key] !== null) {
+                        // If the value is an object, loop through its properties
+                        Object.keys(gameData[key]).forEach(subKey => {
+                            plainTextResponse += `${key}.${subKey} = ${gameData[key][subKey]}\n`;
+                        });
+                    } else {
+                        plainTextResponse += `${key} = ${gameData[key]}\n`;
+                    }
+                });
+
                 res.type('text/plain').send(plainTextResponse);
             } else {
                 res.status(404).send(`No game found with ID ${gameId}`);
