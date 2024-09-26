@@ -1,6 +1,7 @@
 const express = require('express');
 const https = require('https');
-const axios = require('axios')
+const axios = require('axios');
+const cheerio = require('cheerio');
 const router = express.Router();
 
 // Helper function to fetch data from a given URL
