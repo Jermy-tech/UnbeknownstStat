@@ -1,5 +1,7 @@
 const express = require('express');
 const https = require('https');
+const axios = require('axios');
+const cheerio = require('cheerio');
 const router = express.Router();
 
 // Helper function to fetch data from a given URL
@@ -203,7 +205,27 @@ router.get('/camera/plain', (req, res) => {
     }, res);
 });
 
-router.get('/game/:id', (req, res) => {
+async function getGameName(placeId) {
+    const url = `https://www.roblox.com/games/${placeId}`;
+    
+    try {
+        const response = await axios.get(url);
+        
+        if (response.status === 200) {
+            const $ = cheerio.load(response.data);
+            const title = $('title').text();
+            const gameName = title.replace(" - Roblox", "").trim();
+            return gameName;
+        } else {
+            throw new Error("Error fetching data.");
+        }
+    } catch (error) {
+        console.error("Error:", error.message);
+        throw new Error("Error occurred while fetching data.");
+    }
+}
+
+router.get('/game/:id', async (req, res) => {
     const gameId = req.params.id;
 
     // Basic validation to ensure the ID is numeric
@@ -211,25 +233,16 @@ router.get('/game/:id', (req, res) => {
         return res.status(400).send('Invalid game ID format. ID must be numeric.');
     }
 
-    const robloxApiUrl = `https://games.roblox.com/v1/games?universeIds=${gameId}`;
-
-    fetchData(robloxApiUrl, (apiData) => {
-        try {
-            const parsedData = JSON.parse(apiData);
-            if (parsedData.data && parsedData.data.length > 0) {
-                // Return the entire game data in JSON format
-                res.json(parsedData.data[0]);
-            } else {
-                res.status(404).send(`No game found with ID ${gameId}`);
-            }
-        } catch (err) {
-            console.error(`Error parsing Roblox API response for ID ${gameId}:`, err);
-            res.status(500).send('Error processing Roblox API response.');
-        }
-    }, res);
+    try {
+        const gameName = await getGameName(gameId);
+        res.json({ gameId, gameName });
+    } catch (err) {
+        console.error(`Error getting game name for ID ${gameId}:`, err);
+        res.status(500).send('Error processing request.');
+    }
 });
 
-router.get('/game/:id/plain', (req, res) => {
+router.get('/game/:id/plain', async (req, res) => {
     const gameId = req.params.id;
 
     // Basic validation to ensure the ID is numeric
@@ -237,37 +250,14 @@ router.get('/game/:id/plain', (req, res) => {
         return res.status(400).send('Invalid game ID format. ID must be numeric.');
     }
 
-    const robloxApiUrl = `https://games.roblox.com/v1/games?universeIds=${gameId}`;
-
-    fetchData(robloxApiUrl, (apiData) => {
-        try {
-            const parsedData = JSON.parse(apiData);
-            if (parsedData.data && parsedData.data.length > 0) {
-                const gameData = parsedData.data[0];
-                
-                // Construct a plain text response with "key = value" on new lines
-                let plainTextResponse = '';
-
-                Object.keys(gameData).forEach(key => {
-                    if (typeof gameData[key] === 'object' && gameData[key] !== null) {
-                        // If the value is an object, loop through its properties
-                        Object.keys(gameData[key]).forEach(subKey => {
-                            plainTextResponse += `${key}.${subKey} = ${gameData[key][subKey]}\n`;
-                        });
-                    } else {
-                        plainTextResponse += `${key} = ${gameData[key]}\n`;
-                    }
-                });
-
-                res.type('text/plain').send(plainTextResponse);
-            } else {
-                res.status(404).send(`No game found with ID ${gameId}`);
-            }
-        } catch (err) {
-            console.error(`Error parsing Roblox API response for ID ${gameId}:`, err);
-            res.status(500).send('Error processing Roblox API response.');
-        }
-    }, res);
+    try {
+        const gameName = await getGameName(gameId);
+        const plainTextResponse = `Game ID = ${gameId}\nGame Name = ${gameName}`;
+        res.type('text/plain').send(plainTextResponse);
+    } catch (err) {
+        console.error(`Error getting game name for ID ${gameId}:`, err);
+        res.status(500).send('Error processing request.');
+    }
 });
 
 module.exports = router;
