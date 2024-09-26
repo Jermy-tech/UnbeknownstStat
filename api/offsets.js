@@ -1,6 +1,5 @@
 const express = require('express');
 const https = require('https');
-const puppeteer = require('puppeteer');
 const router = express.Router();
 
 // Helper function to fetch data from a given URL
@@ -209,98 +208,107 @@ async function getGameDetails(placeId) {
     const url = `https://www.roblox.com/games/${placeId}`;
     
     try {
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
-        await page.goto(url, { waitUntil: 'networkidle2' }); // Wait for the network to be idle
+        const { data } = await axios.get(url);
 
-        const gameDetails = await page.evaluate(() => {
-            const gameName = document.title.replace(" - Roblox", "").trim();
+        const $ = cheerio.load(data);
+        
+        const gameName = $('title').text().replace(" - Roblox", "").trim();
+        
+        // Adjusted selector for description
+        const description = $('div.pre').text().trim();
 
-            const currentActiveElement = document.querySelector('ul li:nth-child(1) p:nth-child(2)');
-            const currentActive = currentActiveElement ? currentActiveElement.innerText.trim() : '';
+        // Adjusted selector for likes
+        const likes = $('div[data-testid="like-count"]').text().trim();
 
-            const favoritesElement = document.querySelector('ul li:nth-child(2) p:nth-child(2)');
-            const favorites = favoritesElement ? favoritesElement.innerText.trim() : '';
+        const currentActive = $('ul li:nth-child(1) p:nth-child(2)').text().trim();
+        const favorites = $('ul li:nth-child(2) p:nth-child(2)').text().trim();
+        const visits = $('ul li:nth-child(3) p:nth-child(2)').text().trim();
+        const created = $('ul li:nth-child(5) p:nth-child(2)').text().trim();
+        const updated = $('ul li:nth-child(6) p:nth-child(2)').text().trim();
+        const gameStat = $('ul li:nth-child(7) p:nth-child(2)').text().trim();
+        const genre = $('ul li:nth-child(8) p:nth-child(2) span:nth-child(1)').text().trim();
 
-            const visitsElement = document.querySelector('ul li:nth-child(3) p:nth-child(2)');
-            const visits = visitsElement ? visitsElement.innerText.trim() : '';
-
-            const createdElement = document.querySelector('ul li:nth-child(5) p:nth-child(2)');
-            const created = createdElement ? createdElement.innerText.trim() : '';
-
-            const updatedElement = document.querySelector('ul li:nth-child(6) p:nth-child(2)');
-            const updated = updatedElement ? updatedElement.innerText.trim() : '';
-
-            const gameStatElement = document.querySelector('ul li:nth-child(7) p:nth-child(2)');
-            const gameStat = gameStatElement ? gameStatElement.innerText.trim() : '';
-
-            // Collect image URLs, filtering out unwanted URLs
-            const images = [];
-            document.querySelectorAll('img').forEach(img => {
-                const src = img.src;
-                // Filter out unwanted data URLs and URLs that end with .gif
-                if (src && !src.startsWith('data:image/') && !src.endsWith('.gif')) {
-                    images.push(src);
-                }
-            });
-
-            return {
-                gameName,
-                currentActive,
-                favorites,
-                visits,
-                created,
-                updated,
-                gameStat,
-                images
-            };
+        // Collect image URLs, filtering out unwanted URLs
+        const images = [];
+        $('img').each((i, img) => {
+            const src = $(img).attr('src');
+            // Filter out unwanted data URLs and URLs that end with .gif
+            if (src && !src.startsWith('data:image/') && !src.endsWith('.gif')) {
+                images.push(src);
+            }
         });
 
-        await browser.close();
-        return gameDetails;
+        return {
+            gameName,
+            description,
+            likes,
+            currentActive,
+            favorites,
+            visits,
+            created,
+            updated,
+            gameStat,
+            genre,
+            images
+        };
     } catch (error) {
         console.error("Error:", error.message);
         throw new Error("Error occurred while fetching data.");
     }
 }
 
-// Routes
-router.get('/game/:id', async (req, res) => {
-    const placeId = req.params.id;
+async function getGameName(placeId) {
+    const url = `https://www.roblox.com/games/${placeId}`;
     
+    try {
+        const response = await axios.get(url);
+        
+        if (response.status === 200) {
+            const $ = cheerio.load(response.data);
+            const title = $('title').text();
+            const gameName = title.replace(" - Roblox", "").trim();
+            return gameName;
+        } else {
+            throw new Error("Error fetching data.");
+        }
+    } catch (error) {
+        console.error("Error:", error.message);
+        throw new Error("Error occurred while fetching data.");
+    }
+}
+
+router.get('/game/:id', async (req, res) => {
+    const gameId = req.params.id;
+
     // Basic validation to ensure the ID is numeric
-    if (!/^\d+$/.test(placeId)) {
+    if (!/^\d+$/.test(gameId)) {
         return res.status(400).send('Invalid game ID format. ID must be numeric.');
     }
 
     try {
-        const gameDetails = await getGameDetails(placeId);
-        res.json(gameDetails);
+        const gameName = await getGameName(gameId);
+        res.json({ gameId, gameName });
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Error retrieving game details.');
+        console.error(`Error getting game name for ID ${gameId}:`, err);
+        res.status(500).send('Error processing request.');
     }
 });
 
 router.get('/game/:id/plain', async (req, res) => {
-    const placeId = req.params.id;
+    const gameId = req.params.id;
 
     // Basic validation to ensure the ID is numeric
-    if (!/^\d+$/.test(placeId)) {
+    if (!/^\d+$/.test(gameId)) {
         return res.status(400).send('Invalid game ID format. ID must be numeric.');
     }
 
     try {
-        const gameDetails = await getGameDetails(placeId);
-        // Construct a plain text response with "key=value" on new lines
-        let plainTextResponse = '';
-        for (const [key, value] of Object.entries(gameDetails)) {
-            plainTextResponse += `${key}=${value}\n`;
-        }
-        res.type('text/plain').send(plainTextResponse.trim());
+        const gameName = await getGameName(gameId);
+        const plainTextResponse = `GameID = ${gameId}\nGameName = ${gameName}`;
+        res.type('text/plain').send(plainTextResponse);
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Error retrieving game details.');
+        console.error(`Error getting game name for ID ${gameId}:`, err);
+        res.status(500).send('Error processing request.');
     }
 });
 
