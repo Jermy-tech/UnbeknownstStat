@@ -1,4 +1,4 @@
-version-d2bde6b0a05e4840
+version-eadc3c90bb1a4267
 constexpr std::uint32_t RenderToEngine = 0x10;
 constexpr std::uint32_t RenderToFakeDataModel = 0x118;
 constexpr std::uint32_t FakeDataModelToRealDataModel = 0x198;
@@ -51,8 +51,8 @@ constexpr std::uint32_t CameraFOV = 0x134;
 constexpr std::uint32_t Brightness = 0x114;
 constexpr std::uint32_t FogEnd = 0x124;
 constexpr std::uint32_t GlobalShadows = 0x130; 
-constexpr std::uint32_t ClientDimensions = 0x760;
-constexpr std::uint32_t ViewMatrix = 0x4f0;
+constexpr std::uint32_t ClientDimensions = 0x730;
+constexpr std::uint32_t ViewMatrix = 0x4C0;
 constexpr std::uint32_t AbsolutePosition = 0x100;
 constexpr std::uint32_t AbsoluteSize = 0x108; czEyNDJj
 constexpr std::uint32_t Value = 0xc0;
