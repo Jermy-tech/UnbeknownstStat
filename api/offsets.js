@@ -27,10 +27,10 @@ const checkVersion = (callback, res) => {
 
         let attempts = 0;
         const requestLatestVersion = () => {
-            fetchData('https://rbxstats.xyz/api/versions/latest', (apiData) => {
+            fetchData('https://clientsettingscdn.roblox.com/v2/client-version/WindowsPlayer', (apiData) => {
                 try {
                     const parsedData = JSON.parse(apiData);
-                    const latestVersion = parsedData.Windows;
+                    const latestVersion = parsedData.clientVersionUpload;
 
                     // Compare versions
                     if (latestVersion === localVersion) {
