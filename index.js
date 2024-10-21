@@ -25,7 +25,7 @@ app.use('/api/offsets', require('./api/offsets'));
 app.use('/api/versions', require('./api/versions'));
 app.use('/api/exploits', require('./api/exploits'));
 
-const SELL_APP_SECRET = 'E9Vv7Ro2yV6kOaVMqDYB0hYE2rOqCN0sAaI7pFnIH3ZoFbYhBsCBXo0D6Xm5R8OU'; // Replace with your Sell.app webhook secret
+const SELL_APP_SECRET = process.env.SELL_APP_SECRET; // Replace with your Sell.app webhook secret
 
 // Verify webhook authenticity
 function verifySignature(payload, signature) {
