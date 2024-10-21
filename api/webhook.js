@@ -1,8 +1,4 @@
 const express = require('express');
-const https = require('https');
-
-const router = express.Router();
-
 const crypto = require('crypto');
 const mongoose = require('mongoose');
 const User = require('../models/User'); // Import the User model
@@ -11,6 +7,7 @@ const dotenv = require('dotenv');
 // Load environment variables from .env file
 dotenv.config();
 
+const router = express.Router();
 const SELL_APP_SECRET = process.env.SELL_APP_SECRET; // Replace with your Sell.app webhook secret
 
 // Verify webhook authenticity
@@ -20,7 +17,14 @@ function verifySignature(payload, signature) {
     return hmac.digest('hex') === signature;
 }
 
-app.all('/', async (req, res) => {
+// Handle GET request for Sell.app
+router.get('/', (req, res) => {
+    // You can add any necessary logic to handle GET requests
+    res.status(200).send('Sell.app webhook endpoint is reachable.');
+});
+
+// Handle POST request for Sell.app
+router.post('/', async (req, res) => {
     const signature = req.headers['x-sell-signature'];
 
     if (!verifySignature(req.body, signature)) {
@@ -60,7 +64,7 @@ app.all('/', async (req, res) => {
         res.status(200).send('Plan upgrade successful');
     } catch (error) {
         console.error('Error upgrading user plan:', error);
-        res.status(500).send('Internal Server Error', error);
+        res.status(500).send('Internal Server Error');
     }
 });
 
