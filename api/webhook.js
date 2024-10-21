@@ -15,7 +15,6 @@ function verifySignature(payload, signature) {
     return hmac.digest('hex') === signature;
 }
 
-// Webhook listener routes
 app.post('/', async (req, res) => {
     const signature = req.headers['x-sell-signature'];
 
@@ -23,7 +22,9 @@ app.post('/', async (req, res) => {
         return res.status(400).send('Invalid signature');
     }
 
-    const { email, product_id } = req.body;
+    // Access the email from the payload
+    const { email } = req.body.data.customer.email;  // Extract email from the payload
+    const product_id = req.body.data.id; // Modify as needed based on your use case
 
     // Define your product-to-plan mapping
     const productToPlan = {
