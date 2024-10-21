@@ -47,7 +47,7 @@ app.post('/', async (req, res) => {
         const user = await User.findOne({ email });
 
         if (!user) {
-            return res.status(404).send('User not found');
+            return res.status(400).send('User not found');
         }
 
         // Update the user's plan
