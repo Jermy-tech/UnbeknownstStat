@@ -74,7 +74,7 @@ app.post('/api/webhook', async (req, res) => {
         res.status(200).send('Plan upgrade successful');
     } catch (error) {
         console.error('Error upgrading user plan:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(500).send('Internal Server Error', error);
     }
 });
 
