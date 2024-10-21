@@ -3,6 +3,10 @@ const https = require('https');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const router = express.Router();
+const apiKeyMiddleware = require('../middlewares/apiKeyMiddleware'); // Import the middleware
+
+// Apply middleware to all routes
+router.use(apiKeyMiddleware);
 
 // Helper function to fetch data from a given URL
 const fetchData = (url, callback, res) => {
