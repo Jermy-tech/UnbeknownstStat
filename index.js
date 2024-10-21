@@ -34,7 +34,7 @@ function verifySignature(payload, signature) {
     return hmac.digest('hex') === signature;
 }
 
-app.post('/', async (req, res) => {
+app.post('/api/webhook', async (req, res) => {
     const signature = req.headers['x-sell-signature'];
 
     if (!verifySignature(req.body, signature)) {
