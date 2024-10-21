@@ -24,7 +24,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/offsets', require('./api/offsets'));
 app.use('/api/versions', require('./api/versions'));
 app.use('/api/exploits', require('./api/exploits'));
-app.use('/api/webhook', require('./api/webhook'));
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
