@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const mongoose = require('mongoose');
 const User = require('../models/User'); // Import the User model
 
-const app = express();
+const app = express.Router();
 app.use(express.json());
 
 const SELL_APP_SECRET = 'E9Vv7Ro2yV6kOaVMqDYB0hYE2rOqCN0sAaI7pFnIH3ZoFbYhBsCBXo0D6Xm5R8OU'; // Replace with your Sell.app webhook secret
