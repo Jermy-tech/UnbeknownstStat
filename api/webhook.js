@@ -2,11 +2,14 @@ const express = require('express');
 const crypto = require('crypto');
 const mongoose = require('mongoose');
 const User = require('../models/User'); // Import the User model
+const dotenv = require('dotenv');
+
+// Load environment variables from .env file
+dotenv.config();
 
 const app = express.Router();
-app.use(express.json());
 
-const SELL_APP_SECRET = '2i9UYjSwCkmgNEv3gKtuv5yXjayOMa5uSMFJKhYekCzrd93BHx8O94aYXNLLl5l9'; // Replace with your Sell.app webhook secret
+const SELL_APP_SECRET = process.env.SELL_APP_SECRET; // Replace with your Sell.app webhook secret
 
 // Verify webhook authenticity
 function verifySignature(payload, signature) {
