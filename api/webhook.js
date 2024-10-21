@@ -1,14 +1,14 @@
 const express = require('express');
 const crypto = require('crypto');
-const axios = require('axios'); // Use Axios for HTTP requests
+const User = require('../models/User'); // Import the User model
 const dotenv = require('dotenv');
 
 // Load environment variables from .env file
 dotenv.config();
 
 const router = express.Router();
+app.use(express.json()); // You can also use bodyParser.json() if preferred
 const SELL_APP_SECRET = process.env.SELL_APP_SECRET; // Your Sell.app webhook secret
-const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL; // Discord webhook URL
 
 // Verify webhook authenticity
 function verifySignature(payload, signature) {
@@ -32,28 +32,62 @@ router.post('/', async (req, res) => {
         return res.status(400).json({ error: 'Invalid signature' });
     }
 
-    // Log the incoming payload
-    console.log('Received payload:', req.body);
+    // Access the customer email from the payload
+    const email = req.body.data?.customer?.email; // Safely access email
 
-    // Send the payload to Discord
+    if (!email) {
+        console.error('Email not found in payload:', req.body);
+        return res.status(400).json({ error: 'Email not found' });
+    }
+
+    // Access the product IDs from the items in the payload
+    const productIds = req.body.data.items.map(item => item.id); // Extract IDs of all items
+
+    // Define your product-to-plan mapping
+    const productToPlan = {
+        '251205': 1, // Example: Product 1 upgrades to Plan 1
+        '251207': 2, // Product 2 upgrades to Plan 2
+        '251210': 3  // Product 3 upgrades to Plan 3 (highest)
+    };
+
+    // Find the highest plan number from purchased products
+    const newPlan = productIds.reduce((highest, productId) => {
+        const plan = productToPlan[productId];
+        return plan > highest ? plan : highest;
+    }, 0);
+
+    if (newPlan === 0) {
+        console.error('Unknown product ID:', productIds);
+        return res.status(400).json({ error: 'Unknown product ID' });
+    }
+
     try {
-        const discordMessage = {
-            content: 'New Sell.app Order Received',
-            embeds: [
-                {
-                    title: 'Order Details',
-                    description: JSON.stringify(req.body, null, 2), // Pretty print JSON
-                    color: 5814783, // Optional color for the embed
-                },
-            ],
-        };
+        // Find the user by email in MongoDB
+        const user = await User.findOne({ email });
 
-        await axios.post(DISCORD_WEBHOOK_URL, discordMessage);
-        console.log('Payload sent to Discord successfully.');
-        return res.status(200).json({ message: 'Payload processed and sent to Discord' });
+        if (!user) {
+            console.error('User not found:', email);
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Update the user's plan
+        user.plan = newPlan;
+
+        // Save the user with the updated plan
+        await user.save();
+
+        console.log(`User ${email} upgraded to Plan ${newPlan}`);
+        return res.status(200).json({ message: 'Plan upgrade successful' });
     } catch (error) {
-        console.error('Error sending payload to Discord:', error);
-        return res.status(500).json({ error: 'Error sending to Discord' });
+        console.error('Error upgrading user plan:', error);
+        
+        // Check for specific error types if needed
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ error: 'Validation error' });
+        }
+
+        // Catch-all for other types of errors
+        return res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
