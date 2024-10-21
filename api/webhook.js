@@ -15,11 +15,11 @@ function verifySignature(payload, signature) {
     return hmac.digest('hex') === signature;
 }
 
-// Webhook listener routes
-app.post('/', async (req, res) => {
+// Webhook listener route for both GET and POST
+app.all('/', async (req, res) => {
     const signature = req.headers['x-sell-signature'];
 
-    if (!verifySignature(req.body, signature)) {
+    if (req.method === 'POST' && !verifySignature(req.body, signature)) {
         return res.status(400).send('Invalid signature');
     }
 
