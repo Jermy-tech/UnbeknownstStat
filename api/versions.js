@@ -1,6 +1,10 @@
 const express = require('express');
 const https = require('https');
 const router = express.Router();
+const apiKeyMiddleware = require('../middlewares/apiKeyMiddleware'); // Import the middleware
+
+// Apply middleware to all routes
+router.use(apiKeyMiddleware);
 
 // Helper function to fetch data from WEAO API
 const fetchData = (url, res, asPlainText = false) => {
