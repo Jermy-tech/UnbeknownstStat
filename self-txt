@@ -1,11 +1,11 @@
-version-9dbf9780562444e1
+version-4e3b062d6e584043
 constexpr std::uint32_t RenderToEngine = 0x10;
 constexpr std::uint32_t RenderToFakeDataModel = 0x118;
 constexpr std::uint32_t FakeDataModelToRealDataModel = 0x1a8;
 constexpr std::uint32_t Name = 0x68;
 constexpr std::uint32_t ClassDescriptor = 0x18;
 constexpr std::uint32_t Children = 0x70;
-constexpr std::uint32_t Parent = 0x40;
+constexpr std::uint32_t Parent = 0x50;
 constexpr std::uint32_t ChildSize = 0x8;
 constexpr std::uint32_t GameId = 0x168;
 constexpr std::uint32_t PlaceId = 0x170;
